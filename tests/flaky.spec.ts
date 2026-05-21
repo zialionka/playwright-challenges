@@ -1,18 +1,47 @@
 import { expect, test } from '@playwright/test';
 
-//Fix the below scripts to work consistently and do not use static waits. Add proper assertions to the tests
-// Login 3 times sucessfully
-test('Login multiple times sucessfully @c1', async ({ page }) => {
+// Challenge 1:
+// - Fixed flaky repeated login by waiting for the success overlay to close and the form to reset.
+// - Added focused assertions for the success message and submitted credentials.
+// - Improved locators with accessible selectors instead of XPath/CSS where possible.
+// - Avoided static waits; the test waits for real UI state.
+// - Did not add POM/hooks/helpers because they would be overhead for this small, page-specific test.
+test('Login multiple times successfully @c1', async ({ page }) => {
+  // Navigation
   await page.goto('/');
-  await page.locator(`//*[@href='/challenge1.html']`).click();
+  await page.getByRole('link', { name: 'Try Challenge 1' }).click();
+
+  // Locators
+  const emailInput = page.getByLabel('Email', { exact: true });
+  const passwordInput = page.getByLabel('Password', { exact: true });
+  const submitButton = page.getByRole('button', { name: 'Sign In' });
+
+  const successHeading = page.getByRole('heading', { name: 'Successfully submitted!' });
+  const successMessage = page.getByRole('status', { name: 'Submission result' });
+
+  const emailDisplay = page.getByRole('note', { name: 'Submitted email' });
+  const passwordDisplay = page.getByRole('note', { name: 'Submitted password' });
+
+  // Test data
+  const loginAttempts = [
+    { email: 'test1@example.com', password: 'password1' },
+    { email: 'test2@example.com', password: 'password2' },
+    { email: 'test3@example.com', password: 'password3' },
+  ];
+
   // Login multiple times
-  for (let i = 1; i <= 3; i++) {
-    await page.locator('#email').fill(`test${i}@example.com`);
-    await page.locator('#password').fill(`password${i}`);
-    await page.locator('#submitButton').click();
-    await expect(page.locator(`#successMessage`)).toContainText('Successfully submitted!');
-    await expect(page.locator(`#successMessage`)).toContainText(`Email: test${i}@example.com`);
-    await expect(page.locator(`#successMessage`)).toContainText(`Password: password${i}`);
+  for (const { email, password } of loginAttempts) {
+    await emailInput.fill(email);
+    await passwordInput.fill(password);
+    await submitButton.click();
+
+    await expect(successHeading).toBeVisible();
+    await expect(emailDisplay).toHaveText(`Email: ${email}`);
+    await expect(passwordDisplay).toHaveText(`Password: ${password}`);
+
+    await expect(successMessage).toBeHidden();
+    await expect(emailInput).toHaveValue('');
+    await expect(passwordInput).toHaveValue('');
   }
 });
 
