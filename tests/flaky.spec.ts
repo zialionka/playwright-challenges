@@ -86,15 +86,36 @@ test('Login animated form and logout successfully @c2', async ({ page }) => {
   await expect(passwordInput).toHaveValue('');
 });
 
-// Fix the Forgot password test and add proper assertions
+// Challenge 3:
+// - Fixed flaky forgot password flow by waiting for the reset form after dynamic DOM replacement.
+// - Added focused assertions for reset form state and success result.
+// - Improved locators with accessible selectors instead of XPath/CSS where possible.
 test('Forgot password @c3', async ({ page }) => {
+  // Navigation
   await page.goto('/');
-  await page.locator(`//*[@href='/challenge3.html']`).click();
-  await page.getByRole('button', { name: 'Forgot Password?' }).click();
-  await page.locator('#email').fill('test@example.com');
-  await page.getByRole('button', { name: 'Reset Password' }).click();
-  await expect(page.getByRole('heading', { name: 'Success!' })).toBeVisible();
-  await expect(page.locator('#mainContent')).toContainText('Password reset link sent!');
+  await page.getByRole('link', { name: 'Try Challenge 3' }).click();
+
+  // Locators
+  const forgotPasswordButton = page.getByRole('button', { name: 'Forgot Password?' });
+  const resetPasswordHeading = page.getByRole('heading', { name: 'Reset Password' });
+  const emailInput = page.getByLabel('Email', { exact: true });
+  const resetPasswordButton = page.getByRole('button', { name: 'Reset Password' });
+
+  const successHeading = page.getByRole('heading', { name: 'Success!' });
+  const formResult = page.getByRole('status', { name: 'Form result' });
+
+  // Test data
+  const email = 'test@example.com';
+
+  // Forgot password flow
+  await forgotPasswordButton.click();
+  await expect(resetPasswordHeading).toBeVisible();
+  await emailInput.fill(email);
+  await resetPasswordButton.click();
+
+  await expect(successHeading).toBeVisible();
+  await expect(formResult).toContainText('Password reset link sent!');
+  await expect(formResult).toContainText(`Email: ${email}`);
 });
 
 //Fix the login test. Hint: There is a global variable that you can use to check if the app is in ready state

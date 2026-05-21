@@ -205,7 +205,7 @@
 
       function showSuccess(message) {
         mainContent.innerHTML = `
-                <div class="success-message">
+                <div class="success-message" role="status" aria-label="Form result">
                     <h3>Success!</h3>
                     ${message}
                     <button class="submit-btn" onclick="showLogin()">Close</button>
