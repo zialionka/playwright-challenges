@@ -134,12 +134,12 @@
       <div class="logo">Dashboard</div>
       <div class="user-profile" id="userProfile">
         <div class="profile-menu">
-          <button id="profileButton" class="profile-button">
-            <span id="userEmail"></span>
+          <button id="profileButton" class="profile-button" aria-label="Profile menu">
+            <span id="userEmail" role="status" aria-label="Logged in user"></span>
             <span>▼</span>
           </button>
-          <div class="dropdown-menu" id="profileMenu">
-            <div class="menu-item" id="logoutOption">Logout</div>
+          <div class="dropdown-menu" id="profileMenu" role="menu" aria-label="Profile menu">
+            <div class="menu-item" id="logoutOption" role="menuitem">Logout</div>
           </div>
         </div>
       </div>
