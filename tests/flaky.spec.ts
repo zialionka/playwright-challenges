@@ -45,15 +45,45 @@ test('Login multiple times successfully @c1', async ({ page }) => {
   }
 });
 
-// Login and logout successfully with animated form and delayed loading
-test('Login animated form and logout sucessfully @c2', async ({ page }) => {
+// Challenge 2:
+// - Fixed flaky submit click by letting Playwright wait for the animated button to become stable.
+// - Waits for delayed dashboard/menu initialization instead of using static waits.
+// - Added focused assertions for login state, menu state, logout, and form reset.
+// - Improved locators with accessible selectors instead of XPath/CSS where possible.
+test('Login animated form and logout successfully @c2', async ({ page }) => {
+  // Navigation
   await page.goto('/');
-  await page.locator(`//*[@href='/challenge2.html']`).click();
-  await page.locator('#email').fill(`test1@example.com`);
-  await page.locator('#password').fill(`password1`);
-  await page.locator('#submitButton').click();
-  await page.locator('#menuButton').click();
-  await page.locator('#logoutOption').click();
+  await page.getByRole('link', { name: 'Try Challenge 2' }).click();
+
+  // Locators
+  const emailInput = page.getByLabel('Email', { exact: true });
+  const passwordInput = page.getByLabel('Password', { exact: true });
+  const submitButton = page.getByRole('button', { name: 'Sign In' });
+
+  const loggedInUser = page.getByRole('status', { name: 'Logged in user' });
+
+  const menuButton = page.getByRole('button', { name: 'My Account' });
+  const accountMenu = page.getByRole('menu', { name: 'Account menu' });
+  const logoutOption = page.getByRole('menuitem', { name: 'Logout' });
+
+  // Test data
+  const email = 'test1@example.com';
+  const password = 'password1';
+
+  // Login and logout
+  await emailInput.fill(email);
+  await passwordInput.fill(password);
+  await submitButton.click({ timeout: 10000 });
+
+  await expect(loggedInUser).toHaveText(`Logged in as: ${email}`);
+  await expect(menuButton).toHaveAttribute('data-initialized', 'true');
+  await menuButton.click();
+  await expect(accountMenu).toBeVisible();
+  await logoutOption.click();
+
+  await expect(emailInput).toBeVisible();
+  await expect(emailInput).toHaveValue('');
+  await expect(passwordInput).toHaveValue('');
 });
 
 // Fix the Forgot password test and add proper assertions

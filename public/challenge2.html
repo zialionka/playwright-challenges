@@ -190,14 +190,14 @@
 
       <div id="dashboard" style="display: none">
         <div class="welcome-message">Welcome!</div>
-        <p id="userEmail"></p>
+        <p id="userEmail" role="status" aria-label="Logged in user"></p>
         <div class="dashboard">
           <button class="menu-button" id="menuButton">My Account</button>
-          <div class="dropdown-menu" id="accountMenu">
-            <div class="menu-item" id="profileOption">Profile</div>
-            <div class="menu-item" id="settingsOption">Settings</div>
-            <div class="menu-item" id="preferencesOption">Preferences</div>
-            <div class="menu-item" id="logoutOption" onclick="logout()">Logout</div>
+          <div class="dropdown-menu" id="accountMenu" role="menu" aria-label="Account menu">
+            <div class="menu-item" id="profileOption" role="menuitem">Profile</div>
+            <div class="menu-item" id="settingsOption" role="menuitem">Settings</div>
+            <div class="menu-item" id="preferencesOption" role="menuitem">Preferences</div>
+            <div class="menu-item" id="logoutOption" role="menuitem" onclick="logout()">Logout</div>
           </div>
         </div>
       </div>
